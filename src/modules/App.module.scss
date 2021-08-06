@@ -1,0 +1,32 @@
+.app {
+    &Active {
+        @apply absolute left-14 top-0 right-0 bottom-0 bg-omnihiveBackgroundColor;
+    }
+
+    &Container {
+        @apply absolute bottom-0 top-0 left-0 w-full h-full flex bg-omnihiveBackgroundColor;
+    }
+}
+
+.sidebar {
+    @apply w-16 flex-col items-center justify-center text-center p-1 pt-4 bg-omnihiveSidebar;
+    @apply min-w-omnihiveSidebar max-w-omnihiveSidebar;
+
+    &Image {
+        @apply w-8 h-8 rounded-md;
+    }
+
+    &Link {
+        @apply ml-1 mb-3 mt-3 w-10 h-10 rounded-md flex justify-center items-center bg-omnihiveBackgroundColor;
+
+        &Active {
+            @apply border border-solid border-white;
+        }
+
+        &Filled {
+            & :hover {
+                @apply cursor-pointer;
+            }
+        }
+    }
+}

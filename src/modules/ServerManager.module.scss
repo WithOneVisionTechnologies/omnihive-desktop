@@ -1,0 +1,29 @@
+.manager {
+    &DividerBox {
+        @apply absolute top-0 left-0 right-0 bottom-0;
+    }
+}
+
+.serverTree {
+    @apply mt-1 ml-3 w-omnihiveServerManagerTree min-w-omnihiveServerManagerTree max-w-omnihiveServerManagerTree bg-omnihiveBackgroundColor;
+
+    &Header {
+        @apply flex text-white text-xs mt-1;
+
+        &Button {
+            @apply h-5 w-5 ml-1 mr-1;
+
+            & :hover {
+                @apply cursor-pointer;
+            }
+        }
+
+        &Left {
+            @apply self-start w-1/2 mt-1;
+        }
+
+        &Right {
+            @apply w-1/2 flex pr-2 justify-end;
+        }
+    }
+}
