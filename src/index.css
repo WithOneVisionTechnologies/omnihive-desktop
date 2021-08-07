@@ -31,7 +31,7 @@ body {
 }
 
 .dock-drop-layer .dock-drop-square {
-    background: black;
+    background: #4d4d4d;
 }
 
 .dock-drop-layer .dock-drop-square:hover {
@@ -44,7 +44,7 @@ body {
 
 .dock-layout > .dock-drop-indicator {
     background: var(--omnihive-orange);
-    opacity: 0.15;
+    opacity: 0.4;
 }
 
 .dock-nav {
