@@ -4,18 +4,18 @@ import { useAtom } from "jotai";
 import styles from "./App.module.scss";
 import ServerManager from "./ServerManager";
 import DataUi from "./DataUi";
-import { atomActiveApplication, atomRegisteredApplications } from "../lib/stores/AppStore";
-import { DesktopApplicationKey } from "../lib/enums/DesktopApplicationKey";
-import { DesktopApplication } from "../lib/models/DesktopApplication";
+import { atomActiveModule, atomRegisteredModules } from "../lib/stores/AppStore";
+import { DesktopModuleKey } from "../lib/enums/DesktopModuleKey";
+import { DesktopModule } from "../lib/models/DesktopModule";
 
 const App: React.FC = (): React.ReactElement => {
-    const [activeApplication, setActiveApplication] = useAtom(atomActiveApplication);
-    const [registeredApplications] = useAtom(atomRegisteredApplications);
+    const [activeModule, setActiveModule] = useAtom(atomActiveModule);
+    const [registeredModules] = useAtom(atomRegisteredModules);
 
     const renderBlanks = (): React.ReactElement[] => {
         const items: React.ReactElement[] = [];
 
-        for (let i = 0; i < 10 - registeredApplications.length; i++) {
+        for (let i = 0; i < 10 - registeredModules.length; i++) {
             items.push(
                 <div key={i} className={styles.sidebarLink}>
                     <img
@@ -33,32 +33,36 @@ const App: React.FC = (): React.ReactElement => {
     return (
         <div className={styles.appContainer}>
             <div className={styles.sidebar}>
-                {registeredApplications.map((app: DesktopApplication) => (
-                    <React.Fragment key={app.key}>
+                {registeredModules.map((desktopModule: DesktopModule) => (
+                    <React.Fragment key={desktopModule.key}>
                         <div
                             className={`${styles.sidebarLink} ${styles.sidebarLinkFilled} ${
-                                activeApplication === app.key ? `${styles.sidebarLinkActive}` : ``
+                                activeModule === desktopModule.key ? `${styles.sidebarLinkActive}` : ``
                             }`}
                             data-tip
-                            data-for={`${app.key}-tooltip`}
+                            data-for={`${desktopModule.key}-tooltip`}
                             onClick={() => {
-                                if (app.key !== activeApplication) {
-                                    setActiveApplication(app.key);
+                                if (desktopModule.key !== activeModule) {
+                                    setActiveModule(desktopModule.key);
                                 }
                             }}
                         >
-                            <img className={styles.sidebarImage} src={app.imageSource} alt={app.displayName} />
+                            <img
+                                className={styles.sidebarImage}
+                                src={desktopModule.imageSource}
+                                alt={desktopModule.displayName}
+                            />
                         </div>
-                        <ReactTooltip id={`${app.key}-tooltip`} place="top" effect="solid" type="warning">
-                            {app.displayName}
+                        <ReactTooltip id={`${desktopModule.key}-tooltip`} place="top" effect="solid" type="warning">
+                            {desktopModule.displayName}
                         </ReactTooltip>
                     </React.Fragment>
                 ))}
                 {renderBlanks()}
             </div>
             <div className={styles.appActive}>
-                {activeApplication === DesktopApplicationKey.ServerManager && <ServerManager />}
-                {activeApplication === DesktopApplicationKey.DataUi && <DataUi />}
+                {activeModule === DesktopModuleKey.ServerManager && <ServerManager />}
+                {activeModule === DesktopModuleKey.DataUi && <DataUi />}
             </div>
         </div>
     );

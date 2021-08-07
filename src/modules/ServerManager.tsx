@@ -1,9 +1,10 @@
 import DockLayout, { DividerBox, LayoutData } from "rc-dock";
 import React from "react";
-import { atomCurrentServerManagerTabId } from "../lib/stores/ServerManagerStore";
+import { atomGlobalTabNumber } from "../lib/stores/AppStore";
 import "rc-dock/dist/rc-dock.css";
 import styles from "./ServerManager.module.scss";
 import { useAtom } from "jotai";
+import AddEditServer from "../components/serverManager/AddEditServer";
 
 const defaultGroups = {
     default: { animated: false },
@@ -34,28 +35,24 @@ const defaultLayout: LayoutData = {
 };
 
 const ServerManager: React.FC = (): React.ReactElement => {
-    const [currentServerManagerTabId, setCurrentServerManagerTabId] = useAtom(atomCurrentServerManagerTabId);
+    const [globalTabNumber, setGlobalTabNumber] = useAtom(atomGlobalTabNumber);
     const dockRef = React.useRef<DockLayout>(null);
 
     const addServer = () => {
         dockRef.current?.dockMove(
             {
-                id: currentServerManagerTabId.toString(),
-                title: <span title="Testing Add">Testing Add</span>,
+                id: globalTabNumber.toString(),
+                title: <span title="Add New Server">Add New Server</span>,
                 closable: true,
                 group: "default",
-                content: (
-                    <div>
-                        <span style={{ color: "white" }}>Testing Add</span>
-                    </div>
-                ),
+                content: <AddEditServer mode="add" />,
             },
             "serverManagerDock",
             "middle"
         );
 
-        const newTabId = currentServerManagerTabId + 1;
-        setCurrentServerManagerTabId(newTabId);
+        const newTabId = globalTabNumber + 1;
+        setGlobalTabNumber(newTabId);
     };
 
     return (

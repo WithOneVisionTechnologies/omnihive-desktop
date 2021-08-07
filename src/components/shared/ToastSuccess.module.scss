@@ -1,0 +1,9 @@
+.toastSuccess {
+    &Container {
+        @apply bg-green-600 border-green-800;
+    }
+
+    &Message {
+        @apply text-white;
+    }
+}

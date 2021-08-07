@@ -1,0 +1,9 @@
+.toastWarning {
+    &Container {
+        @apply bg-omnihiveOrange border-omnihiveOrangeHover;
+    }
+
+    &Message {
+        @apply text-black;
+    }
+}

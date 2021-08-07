@@ -1,0 +1,13 @@
+.toastError {
+    &Container {
+        @apply bg-red-600 border-red-800;
+    }
+
+    &Message {
+        @apply text-white;
+
+        &Body {
+            @apply break-all;
+        }
+    }
+}

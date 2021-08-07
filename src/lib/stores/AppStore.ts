@@ -1,18 +1,22 @@
 import { atom } from "jotai";
-import { DesktopApplicationKey } from "../enums/DesktopApplicationKey";
-import { DesktopApplication } from "../models/DesktopApplication";
+import { DesktopModuleKey } from "../enums/DesktopModuleKey";
+import { DesktopModule } from "../models/DesktopModule";
+import { RegisteredServerModel } from "../models/RegisteredServerModel";
 
-export const atomActiveApplication = atom<DesktopApplicationKey>(DesktopApplicationKey.ServerManager);
+export const atomActiveModule = atom<DesktopModuleKey>(DesktopModuleKey.ServerManager);
 
-export const atomRegisteredApplications = atom<DesktopApplication[]>([
+export const atomRegisteredModules = atom<DesktopModule[]>([
     {
-        key: DesktopApplicationKey.ServerManager,
+        key: DesktopModuleKey.ServerManager,
         displayName: "Server Manager",
-        imageSource: `${process.env.PUBLIC_URL}/images/server_manager.png`,
+        imageSource: `${process.env.PUBLIC_URL}/images/modules/server_manager.png`,
     },
     {
-        key: DesktopApplicationKey.DataUi,
+        key: DesktopModuleKey.DataUi,
         displayName: "Data UI",
-        imageSource: `${process.env.PUBLIC_URL}/images/data_ui.png`,
+        imageSource: `${process.env.PUBLIC_URL}/images/modules/data_ui.png`,
     },
 ]);
+
+export const atomRegisteredServers = atom<RegisteredServerModel[]>([]);
+export const atomGlobalTabNumber = atom<number>(0);

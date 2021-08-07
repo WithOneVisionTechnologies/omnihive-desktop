@@ -1,0 +1,51 @@
+.header {
+    &Container {
+        @apply mx-auto text-center mb-6;
+    }
+
+    &Subtitle {
+        @apply text-2xl text-omnihiveOrange;
+    }
+
+    &Title {
+        @apply text-white text-3xl;
+    }
+}
+
+.innerContainer {
+    @apply w-1/2 mt-20;
+}
+
+.logo {
+    &Container {
+        @apply mx-auto py-6;
+    }
+
+    &Icon {
+        @apply mx-auto w-32;
+    }
+}
+
+.outerContainer {
+    @apply w-full flex flex-col items-center justify-center;
+}
+
+.register {
+    &Button {
+        @apply mx-auto h-10 px-10 text-sm text-white;
+        @apply transition-colors duration-150 rounded-lg focus:shadow-md;
+        @apply bg-omnihiveOrange hover:bg-omnihiveOrangeHover;
+
+        &Disabled {
+            @apply cursor-not-allowed disabled:opacity-50;
+        }
+    }
+
+    &Container {
+        @apply content-center mx-auto text-center pt-4;
+    }
+
+    &Spinner {
+        @apply h-3 animate-spin;
+    }
+}

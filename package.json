@@ -6,14 +6,17 @@
     "productName": "OmniHive Desktop",
     "dependencies": {
         "@craco/craco": "6.2.0",
+        "@withonevision/omnihive-core": "6.2.59",
         "electron-store": "8.0.0",
+        "is-ip": "3.1.0",
         "jotai": "1.2.2",
+        "rc-dock": "3.0.18",
+        "rc-tree": "5.0.1",
         "react": "17.0.2",
         "react-dom": "17.0.2",
         "react-scripts": "4.0.3",
         "react-tooltip": "4.2.21",
-        "rc-dock": "3.0.18",
-        "rc-tree": "5.0.1",
+        "socket.io-client": "4.1.3",
         "web-vitals": "2.1.0"
     },
     "devDependencies": {

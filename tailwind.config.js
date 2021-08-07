@@ -8,6 +8,7 @@ module.exports = {
                 omnihiveDarkGrey: "#969696",
                 omnihiveLightGrey: "#ababab",
                 omnihiveOrange: "#d38d15",
+                omnihiveOrangeHover: "#eca62d",
                 omnihiveSidebar: "#373737",
             },
             maxWidth: {
@@ -24,7 +25,9 @@ module.exports = {
         },
     },
     variants: {
-        extend: {},
+        extend: {
+            opacity: ["disabled"],
+        },
     },
     plugins: [],
 };

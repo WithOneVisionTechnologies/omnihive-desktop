@@ -11,7 +11,7 @@
         @apply flex text-white text-xs mt-1;
 
         &Button {
-            @apply h-5 w-5 ml-1 mr-1;
+            @apply h-6 w-6 ml-1 mr-1;
 
             & :hover {
                 @apply cursor-pointer;

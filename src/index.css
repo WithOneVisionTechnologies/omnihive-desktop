@@ -7,11 +7,17 @@
     --omnihive-dark-grey: #969696;
     --omnihive-light-grey: #ababab;
     --omnihive-orange: #d38d15;
+    --omnihive-orange-hover: #eca62d;
     --omnihive-sidebar: #373737;
 }
 
 body {
     background-color: black;
+}
+
+.dock-content .dock-tabpane {
+    overflow-y: scroll;
+    padding-bottom: 30px;
 }
 
 .dock-content-holder {
