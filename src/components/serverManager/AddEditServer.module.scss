@@ -1,6 +1,6 @@
 .header {
     &Container {
-        @apply mx-auto text-center mb-6;
+        @apply mx-auto text-center mb-4;
     }
 
     &Subtitle {
@@ -13,7 +13,7 @@
 }
 
 .innerContainer {
-    @apply w-1/2 mt-20;
+    @apply w-1/2 mt-5;
 }
 
 .logo {
@@ -22,7 +22,7 @@
     }
 
     &Icon {
-        @apply mx-auto w-32;
+        @apply mx-auto w-20;
     }
 }
 

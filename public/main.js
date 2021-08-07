@@ -139,8 +139,8 @@ function initializeApplication() {
 function createNewWindow() {
     // Create the browser window.
     let appWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 800,
         icon: `${publicDirectory}/images/Application.icns`,
         show: false,
         webPreferences: {
