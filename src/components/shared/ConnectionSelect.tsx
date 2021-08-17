@@ -1,14 +1,8 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import styles from "./ConnectionSelect.module.scss";
 import { RegisteredServerModel } from "../../lib/models/RegisteredServerModel";
 import { ServerStatus } from "@withonevision/omnihive-core/enums/ServerStatus";
-
-type AvailableConnection = {
-    id: number;
-    name: string;
-    status: string;
-};
 
 const connections: RegisteredServerModel[] = [
     {
@@ -17,7 +11,7 @@ const connections: RegisteredServerModel[] = [
         serverGroupId: "123",
         label: "Online Test",
         status: ServerStatus.Online,
-        urls: [{ path: "https://example.url.com", type: "graphql", metadata: {} }],
+        urls: [],
     },
     {
         address: "address2",
@@ -25,7 +19,7 @@ const connections: RegisteredServerModel[] = [
         serverGroupId: "123",
         label: "Error Test",
         status: ServerStatus.Error,
-        urls: [{ path: "https://example.url.com", type: "graphql", metadata: {} }],
+        urls: [],
     },
     {
         address: "address3",
@@ -33,7 +27,7 @@ const connections: RegisteredServerModel[] = [
         serverGroupId: "123",
         label: "Offline Test",
         status: ServerStatus.Offline,
-        urls: [{ path: "https://example.url.com", type: "graphql", metadata: {} }],
+        urls: [],
     },
     {
         address: "address4",
@@ -41,7 +35,7 @@ const connections: RegisteredServerModel[] = [
         serverGroupId: "123",
         label: "Admin Test",
         status: ServerStatus.Admin,
-        urls: [{ path: "https://example.url.com", type: "graphql", metadata: {} }],
+        urls: [],
     },
     {
         address: "address5",
@@ -49,7 +43,7 @@ const connections: RegisteredServerModel[] = [
         serverGroupId: "123",
         label: "Rebuilding Test",
         status: ServerStatus.Rebuilding,
-        urls: [{ path: "https://example.url.com", type: "graphql", metadata: {} }],
+        urls: [],
     },
     {
         address: "address6",
@@ -57,7 +51,7 @@ const connections: RegisteredServerModel[] = [
         serverGroupId: "123",
         label: "Unknown Test",
         status: ServerStatus.Unknown,
-        urls: [{ path: "https://example.url.com", type: "graphql", metadata: {} }],
+        urls: [],
     },
 ];
 
@@ -65,10 +59,13 @@ function classNames(...classes: any[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function ConnectionSelect() {
-    const [selected, setSelected] = useState(connections[3]);
+export interface ConnectionSelectProps {
+    connection?: RegisteredServerModel;
+    setConnection: (value: RegisteredServerModel) => void;
+}
 
-    const getStatusColor = (status: ServerStatus): string => {
+const ConnectionSelect: React.FC<ConnectionSelectProps> = (props): React.ReactElement => {
+    const getStatusColor = (status?: ServerStatus): string => {
         switch (status) {
             case ServerStatus.Admin:
                 return "bg-omnihiveStatusOrange";
@@ -88,20 +85,22 @@ export default function ConnectionSelect() {
     };
 
     return (
-        <Listbox value={selected} onChange={setSelected}>
+        <Listbox value={props.connection} onChange={props.setConnection}>
             {({ open }: { open: boolean }) => (
                 <>
                     <div className={styles.connectionSelect}>
                         <Listbox.Button className={styles.connectionSelectButton}>
                             <div className={styles.connectionSelectButtonView}>
                                 <span
-                                    aria-label={selected.status}
+                                    aria-label={props.connection?.status}
                                     className={classNames(
-                                        getStatusColor(selected.status),
+                                        getStatusColor(props.connection?.status),
                                         styles.connectionSelectButtonViewStatus
                                     )}
                                 />
-                                <span className={styles.connectionSelectButtonViewText}>{selected.label}</span>
+                                <span className={styles.connectionSelectButtonViewText}>
+                                    {props.connection?.label ?? "No Connection"}
+                                </span>
                                 <span className={styles.connectionSelectListItemViewSelected}>
                                     <img
                                         className={styles.connectionSelectListItemViewSelectedImage}
@@ -125,7 +124,7 @@ export default function ConnectionSelect() {
                                         className={styles.connectionSelectListItem}
                                         value={connection}
                                     >
-                                        {({ selected, active }: { selected: boolean; active: boolean }) => (
+                                        {({ selected }: { selected: boolean }) => (
                                             <>
                                                 <div className={styles.connectionSelectListItemView}>
                                                     <span
@@ -165,4 +164,6 @@ export default function ConnectionSelect() {
             )}
         </Listbox>
     );
-}
+};
+
+export default ConnectionSelect;
