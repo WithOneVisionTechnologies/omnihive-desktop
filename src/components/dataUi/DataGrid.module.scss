@@ -1,0 +1,31 @@
+.header {
+    &Container {
+        @apply mx-auto text-center mb-4;
+    }
+
+    &Subtitle {
+        @apply text-2xl text-omnihiveOrange;
+    }
+
+    &Title {
+        @apply text-white text-3xl;
+    }
+}
+
+.innerContainer {
+    @apply w-1/2 mt-5;
+}
+
+.logo {
+    &Container {
+        @apply mx-auto py-6;
+    }
+
+    &Icon {
+        @apply mx-auto w-20;
+    }
+}
+
+.outerContainer {
+    @apply w-full flex flex-col items-center justify-center;
+}

@@ -6,6 +6,7 @@
     "productName": "OmniHive Desktop",
     "dependencies": {
         "@craco/craco": "6.2.0",
+        "@headlessui/react": "^1.4.0",
         "@withonevision/omnihive-core": "6.2.60",
         "electron-store": "8.0.0",
         "is-ip": "3.1.0",

@@ -10,6 +10,12 @@ module.exports = {
                 omnihiveOrange: "#d38d15",
                 omnihiveOrangeHover: "#eca62d",
                 omnihiveSidebar: "#373737",
+                omnihiveModal: "#595959",
+                omnihiveStatusGreen: "#08bb1d",
+                omnihiveStatusYellow: "#ffd200",
+                omnihiveStatusOrange: "#ff7200",
+                omnihiveStatusRed: "#cd0808",
+                omnihiveStatusGrey: "#acacac",
             },
             maxWidth: {
                 omnihiveSidebar: "4rem",
