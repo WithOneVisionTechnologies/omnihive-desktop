@@ -9,15 +9,19 @@
 }
 
 .sidebar {
-    @apply w-16 flex-col items-center justify-center text-center p-1 pt-4 bg-omnihiveSidebar;
+    @apply w-16 pt-2 pl-2 flex flex-col text-center bg-omnihiveSidebar;
     @apply min-w-omnihiveSidebar max-w-omnihiveSidebar;
+
+    &Apps {
+        @apply flex-auto;
+    }
 
     &Image {
         @apply w-8 h-8 rounded-md;
     }
 
     &Link {
-        @apply ml-1 mb-3 mt-3 w-10 h-10 rounded-md flex justify-center items-center bg-omnihiveBackgroundColor;
+        @apply mb-1 mt-2 w-10 h-10 rounded-md flex justify-center items-center bg-omnihiveBackgroundColor;
 
         &Active {
             @apply border border-solid border-white;
@@ -28,5 +32,9 @@
                 @apply cursor-pointer;
             }
         }
+    }
+
+    &Tools {
+        @apply mb-3;
     }
 }
