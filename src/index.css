@@ -94,3 +94,21 @@ body {
     border-bottom: none;
     padding-left: 0px;
 }
+
+.rc-tree-node-content-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100%;
+}
+
+.rc-tree-iconEle {
+    padding-right: 0.5rem;
+}
+
+.rc-tree-treenode.drop-target:not(.drag-over-gap-top) {
+    padding-bottom: 1.175rem;
+}
+.rc-tree-treenode.drag-over-gap-top {
+    padding-top: 1.175rem;
+}

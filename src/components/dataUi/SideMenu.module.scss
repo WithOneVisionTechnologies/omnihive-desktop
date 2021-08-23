@@ -1,0 +1,27 @@
+.sideBar {
+    @apply mt-1 pl-3 w-omnihiveServerManagerTree min-w-omnihiveServerManagerTree max-w-omnihiveServerManagerTree bg-omnihiveBackgroundColor;
+
+    &Header {
+        @apply flex text-white text-xs mt-1;
+
+        &Button {
+            @apply h-6 w-6 ml-1 mr-1;
+
+            & :hover {
+                @apply cursor-pointer;
+            }
+        }
+
+        &Left {
+            @apply self-start w-full mt-1;
+        }
+
+        &Right {
+            @apply w-1/2 flex pr-2 justify-end items-center;
+        }
+    }
+
+    &Tree {
+        @apply mt-3;
+    }
+}

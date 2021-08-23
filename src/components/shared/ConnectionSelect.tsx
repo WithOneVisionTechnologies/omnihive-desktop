@@ -6,10 +6,10 @@ import { ServerStatus } from "@withonevision/omnihive-core/enums/ServerStatus";
 
 const connections: RegisteredServerModel[] = [
     {
-        address: "address1",
-        adminPassword: "password",
-        serverGroupId: "123",
-        label: "Online Test",
+        address: "https://omnihivedev.12stone.church/remote-admin",
+        adminPassword: "dS2sS0aN7tI7fD9oJ0tO0eV4zA5vE3gC",
+        serverGroupId: "e400fc13-f9de-45e3-9307-5c8319c879e5",
+        label: "12Stone-Dev",
         status: ServerStatus.Online,
         urls: [],
     },
