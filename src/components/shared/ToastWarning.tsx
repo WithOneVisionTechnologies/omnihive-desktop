@@ -1,7 +1,7 @@
 import React from "react";
 import { ToastContainer } from "./ToastContainer";
-import toastStyles from "./ToastCommon.module.scss";
-import styles from "./ToastWarning.module.scss";
+import toastStyles from "./ToastCommon.module.css";
+import styles from "./ToastWarning.module.css";
 
 export interface ToastWarningProps {
     show: boolean;
@@ -16,7 +16,7 @@ export const ToastWarning: React.FC<ToastWarningProps> = (props): React.ReactEle
                     <div className={`${toastStyles.toastCommonContainer} ${styles.toastWarningContainer}`}>
                         <div className={toastStyles.toastCommonIconContainer}>
                             <img
-                                src={`${process.env.PUBLIC_URL}/images/sharedComponents/toastWarning.png`}
+                                src="/assets/images/sharedComponents/toastWarning.png"
                                 alt="warning"
                                 className={toastStyles.toastCommonIcon}
                             />

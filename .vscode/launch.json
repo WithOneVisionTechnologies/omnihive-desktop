@@ -1,25 +1,13 @@
 {
     "version": "0.2.0",
-    "compounds": [
-        {
-          "name": "OmniHive Dev",
-          "configurations": ["Yarn Dev", "Attach to Electron"],
-        }
-    ],
     "configurations": [
         {
-            "type": "node",
-            "request": "launch",
-            "name": "Yarn Dev",
-            "runtimeExecutable": "yarn",
-            "runtimeArgs": [ "dev" ]
-        },
-        {
-            "type": "chrome",
+            "type": "pwa-chrome",
             "request": "attach",
-            "name": "Attach to Electron",
+            "name": "OmniHive Dev",
             "port": 8315,
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "yarn start"
         }
-    ],
+    ]
 }

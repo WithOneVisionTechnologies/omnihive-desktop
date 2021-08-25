@@ -12,11 +12,8 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "editor.formatOnSave": true,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": false,
     "typescript.preferences.quoteStyle": "double",
-    "typescript.suggest.paths": false,
-    "css.validate": false,
-    "less.validate": false,
-    "scss.validate": false
+    "npm.packageManager": "yarn",
+    "debug.onTaskErrors": "debugAnyway",
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -3,28 +3,33 @@ import { ServerStatus } from "@withonevision/omnihive-core/enums/ServerStatus";
 import { IsHelper } from "@withonevision/omnihive-core/helpers/IsHelper";
 import { AdminResponse } from "@withonevision/omnihive-core/models/AdminResponse";
 import isIp from "is-ip";
-import { useAtom } from "jotai";
 import React from "react";
 import socketio from "socket.io-client";
 import { DesktopConstants } from "../../lib/models/DesktopConstants";
 import { RegisteredServerModel } from "../../lib/models/RegisteredServerModel";
-import { atomRegisteredServers } from "../../lib/stores/AppStore";
 import { ToastError } from "../shared/ToastError";
 import { ToastSuccess } from "../shared/ToastSuccess";
-import formStyles from "../FormStyles.module.scss";
-import styles from "./AddEditServer.module.scss";
+import formStyles from "../shared/FormStyles.module.css";
+import styles from "./AddEditServer.module.css";
+import { useQuery, useQueryClient } from "react-query";
+import { getRegisteredServers } from "../../lib/queries/AppQueries";
+import DockLayout from "rc-dock";
 
 export interface AddEditServerProps {
     editServerLabel?: string;
     mode: string;
 }
 
-const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement => {
+const AddEditServer = React.forwardRef<DockLayout, AddEditServerProps>((props, _ref) => {
     let oldServerLabel: string = "";
 
     if (!IsHelper.isNullOrUndefinedOrEmptyStringOrWhitespace(props.editServerLabel)) {
         oldServerLabel = props.editServerLabel;
     }
+
+    const queryClient = useQueryClient();
+
+    const registeredServers = useQuery<RegisteredServerModel[], Error>("getRegisteredServers", getRegisteredServers);
 
     const [serverLabel, setServerLabel] = React.useState<string>("");
     const [serverAddress, setServerAddress] = React.useState<string>("");
@@ -39,11 +44,9 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
     const [adminPasswordError, setAdminPasswordError] = React.useState<string>("");
     const [serverGroupIdError, setServerGroupIdError] = React.useState<string>("");
 
-    const [registeredServers, setRegisteredServers] = useAtom(atomRegisteredServers);
-
     React.useEffect(() => {
         if (props.mode.toLowerCase() === "edit") {
-            const workerServer: RegisteredServerModel | undefined = registeredServers.find(
+            const workerServer: RegisteredServerModel | undefined = registeredServers.data?.find(
                 (server: RegisteredServerModel) => server.label === props.editServerLabel
             );
 
@@ -71,7 +74,8 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
 
         if (
             props.mode.toLowerCase() === "add" &&
-            registeredServers.filter((server: RegisteredServerModel) => {
+            registeredServers.data &&
+            registeredServers.data.filter((server: RegisteredServerModel) => {
                 return server.label === value;
             }).length > 0
         ) {
@@ -82,7 +86,8 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
         if (
             props.mode.toLowerCase() === "edit" &&
             value !== oldServerLabel &&
-            registeredServers.filter((server: RegisteredServerModel) => {
+            registeredServers.data &&
+            registeredServers.data.filter((server: RegisteredServerModel) => {
                 return server.label === value;
             }).length > 0
         ) {
@@ -148,7 +153,7 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
         }
 
         if (props.mode.toLowerCase() === "edit") {
-            const workerServer: RegisteredServerModel | undefined = registeredServers.find(
+            const workerServer: RegisteredServerModel | undefined = registeredServers.data?.find(
                 (server: RegisteredServerModel) => server.label === props.editServerLabel
             );
 
@@ -260,7 +265,7 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
                         <img
                             className={styles.logoIcon}
                             alt="OmniHive Logo"
-                            src={`${process.env.PUBLIC_URL}/images/common/oh_icon_light.png`}
+                            src="/assets/images/common/oh_icon_light.png"
                         />
                     </div>
                     <div className={styles.headerContainer}>
@@ -360,7 +365,7 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
                             {processing && (
                                 <button disabled={true} className={styles.registerButton}>
                                     <img
-                                        src={`${process.env.PUBLIC_URL}/images/common/spinner.png`}
+                                        src="/assets/images/common/spinner.png"
                                         alt="spinner"
                                         className={styles.registerSpinner}
                                     />
@@ -372,6 +377,6 @@ const AddEditServer: React.FC<AddEditServerProps> = (props): React.ReactElement 
             </div>
         </>
     );
-};
+});
 
 export default AddEditServer;

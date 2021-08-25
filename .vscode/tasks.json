@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "start",
+            "group": "none",
+            "isBackground": true,
+            "label": "yarn start",
+            "detail": "ELECTRON_DISABLE_SECURITY_WARNINGS=true electron-forge start --inspect-electron"
+        }
+    ]
+}

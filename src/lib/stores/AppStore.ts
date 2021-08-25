@@ -1,22 +1,14 @@
-import { atom } from "jotai";
+import { proxy } from "valtio";
 import { DesktopModuleKey } from "../enums/DesktopModuleKey";
-import { DesktopModule } from "../models/DesktopModule";
-import { RegisteredServerModel } from "../models/RegisteredServerModel";
 
-export const atomActiveModule = atom<DesktopModuleKey>(DesktopModuleKey.ServerManager);
+export interface IAppStore {
+    activeModuleKey: DesktopModuleKey;
+    globalTabNumber: number;
+}
 
-export const atomRegisteredModules = atom<DesktopModule[]>([
-    {
-        key: DesktopModuleKey.ServerManager,
-        displayName: "Server Manager",
-        imageSource: `${process.env.PUBLIC_URL}/images/modules/server_manager.png`,
-    },
-    {
-        key: DesktopModuleKey.DataUi,
-        displayName: "Data UI",
-        imageSource: `${process.env.PUBLIC_URL}/images/modules/data_ui.png`,
-    },
-]);
+export const AppStore = {
+    activeModuleKey: DesktopModuleKey.ServerManager,
+    globalTabNumber: 0,
+};
 
-export const atomRegisteredServers = atom<RegisteredServerModel[]>([]);
-export const atomGlobalTabNumber = atom<number>(0);
+export const AppStoreProxy = proxy<IAppStore>(AppStore);

@@ -1,7 +1,7 @@
 import React from "react";
 import { ToastContainer } from "./ToastContainer";
-import toastStyles from "./ToastCommon.module.scss";
-import styles from "./ToastError.module.scss";
+import toastStyles from "./ToastCommon.module.css";
+import styles from "./ToastError.module.css";
 
 export interface ToastErrorProps {
     show: boolean;
@@ -16,7 +16,7 @@ export const ToastError: React.FC<ToastErrorProps> = (props): React.ReactElement
                     <div className={`${toastStyles.toastCommonContainer} ${styles.toastErrorContainer}`}>
                         <div className={toastStyles.toastCommonIconContainer}>
                             <img
-                                src={`${process.env.PUBLIC_URL}/images/sharedComponents/toastError.png`}
+                                src="/assets/images/sharedComponents/toastError.png"
                                 alt="error"
                                 className={toastStyles.toastCommonIcon}
                             />

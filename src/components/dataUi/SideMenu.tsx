@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ConnectionSelect from "../shared/ConnectionSelect";
-import styles from "./SideMenu.module.scss";
+import styles from "./SideMenu.module.css";
 import { RegisteredServerModel } from "../../lib/models/RegisteredServerModel";
 import ViewTree from "./ViewTree";
 import { DataNode } from "rc-tree/lib/interface";
-import { useQuery } from "react-query";
 import { getUserViews } from "../../lib/queries/dataUi/SideBar";
+import DockLayout from "rc-dock";
 
-export interface SideBarProps {
-    dockRef: any;
-}
+const SideMenu = React.forwardRef<DockLayout, {}>((_props, ref) => {
+    const [connection, setConnection] = React.useState<RegisteredServerModel | undefined>(undefined);
+    const [treeData, setTreeData] = React.useState<DataNode[] | undefined>([]);
 
-const SideMenu: React.FC<SideBarProps> = (props): React.ReactElement => {
-    const [connection, setConnection] = useState<RegisteredServerModel | undefined>(undefined);
-    const [treeData, setTreeData] = useState<DataNode[] | undefined>([]);
     // const userViewQuery = useQuery("dataUi-userViews", getUserViews);
 
     // useEffect(() => {
@@ -22,7 +19,7 @@ const SideMenu: React.FC<SideBarProps> = (props): React.ReactElement => {
     //     }
     // }, [userViewQuery.isLoading]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         getUserViews().then((views) => {
             setTreeData(views);
         });
@@ -43,24 +40,19 @@ const SideMenu: React.FC<SideBarProps> = (props): React.ReactElement => {
                                 return;
                             }}
                         >
-                            <img src={`${process.env.PUBLIC_URL}/images/dataUi/add.png`} />
+                            <img src="/assets/images/dataUi/add.png" />
                         </div>
                         <div className={styles.sideBarHeaderButton} title="Add Folder">
-                            <img src={`${process.env.PUBLIC_URL}/images/dataUi/add-folder.png`} />
+                            <img src="/assets/images/dataUi/add-folder.png" />
                         </div>
                     </div>
                 </div>
                 {treeData && (
-                    <ViewTree
-                        className={styles.sideBarTree}
-                        dockRef={props.dockRef}
-                        data={treeData}
-                        setData={setTreeData}
-                    />
+                    <ViewTree className={styles.sideBarTree} data={treeData} setTreeData={setTreeData} ref={ref} />
                 )}
             </div>
         </>
     );
-};
+});
 
 export default SideMenu;

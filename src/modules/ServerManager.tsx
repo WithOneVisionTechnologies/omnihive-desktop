@@ -1,12 +1,11 @@
 import DockLayout, { DividerBox, DropDirection, LayoutBase, LayoutData } from "rc-dock";
-import React, { useEffect } from "react";
-import { atomGlobalTabNumber } from "../lib/stores/AppStore";
+import React from "react";
 import "rc-dock/dist/rc-dock.css";
-import styles from "./ServerManager.module.scss";
-import { useAtom } from "jotai";
-import AddEditServer from "../components/serverManager/AddEditServer";
-import { serverManagerDockLayout } from "../lib/stores/ServerManagerStore";
+import styles from "./ServerManager.module.css";
 import { IsHelper } from "@withonevision/omnihive-core/helpers/IsHelper";
+import { useSnapshot } from "valtio";
+import { IAppStore, AppStoreProxy } from "../lib/stores/AppStore";
+import AddEditServer from "../components/serverManager/AddEditServer";
 
 const defaultGroups = {
     default: { animated: false },
@@ -37,33 +36,24 @@ const defaultLayout: LayoutData = {
 };
 
 const ServerManager: React.FC = (): React.ReactElement => {
-    const [globalTabNumber, setGlobalTabNumber] = useAtom(atomGlobalTabNumber);
-    const [dockLayout, setDockLayout] = useAtom(serverManagerDockLayout);
     const dockRef = React.useRef<DockLayout>(null);
+    const appStoreSnap = useSnapshot<IAppStore>(AppStoreProxy);
+    const [dockLayout, setDockLayout] = React.useState<LayoutData>(defaultLayout);
 
-    const addServer = () => {
+    const addServerClick = () => {
         dockRef.current?.dockMove(
             {
-                id: globalTabNumber.toString(),
+                id: appStoreSnap.globalTabNumber.toString(),
                 title: <span title="Add New Server">Add New Server</span>,
                 closable: true,
                 group: "default",
-                content: <AddEditServer mode="add" />,
+                content: <AddEditServer mode="add" ref={dockRef} />,
             },
             "serverManagerDock",
             "middle"
         );
 
-        const newTabId = globalTabNumber + 1;
-        setGlobalTabNumber(newTabId);
-    };
-
-    const getLayout = (): LayoutData => {
-        if (!IsHelper.isNullOrUndefined(dockLayout)) {
-            return dockLayout;
-        } else {
-            return defaultLayout;
-        }
+        AppStoreProxy.globalTabNumber++;
     };
 
     const onDockLayoutChange = (
@@ -72,7 +62,7 @@ const ServerManager: React.FC = (): React.ReactElement => {
         _direction?: DropDirection | undefined
     ) => {
         if (!IsHelper.isNullOrUndefined(dockRef.current)) {
-            setDockLayout(dockRef.current?.getLayout());
+            setDockLayout(dockRef.current.getLayout());
         }
     };
 
@@ -83,11 +73,11 @@ const ServerManager: React.FC = (): React.ReactElement => {
                     <div className={styles.serverTreeHeader}>
                         <div className={styles.serverTreeHeaderLeft}>OMNIHIVE SERVERS</div>
                         <div className={styles.serverTreeHeaderRight}>
-                            <div className={styles.serverTreeHeaderButton} title="Add Server" onClick={addServer}>
-                                <img src={`${process.env.PUBLIC_URL}/images/manager/add.png`} />
+                            <div className={styles.serverTreeHeaderButton} title="Add Server" onClick={addServerClick}>
+                                <img src="/assets/images/manager/add.png" />
                             </div>
                             <div className={styles.serverTreeHeaderButton} title="Remove All Servers">
-                                <img src={`${process.env.PUBLIC_URL}/images/manager/trash.png`} />
+                                <img src="/assets/images/manager/trash.png" />
                             </div>
                         </div>
                     </div>
@@ -97,7 +87,7 @@ const ServerManager: React.FC = (): React.ReactElement => {
                     ref={dockRef}
                     groups={defaultGroups}
                     onLayoutChange={onDockLayoutChange}
-                    defaultLayout={getLayout()}
+                    defaultLayout={dockLayout}
                 />
             </DividerBox>
         </div>

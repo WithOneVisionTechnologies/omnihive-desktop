@@ -1,7 +1,7 @@
 import DockLayout, { DividerBox, LayoutData } from "rc-dock";
 import React from "react";
+import styles from "./DataUi.module.css";
 import SideMenu from "../components/dataUi/SideMenu";
-import styles from "./DataUi.module.scss";
 
 const defaultGroups = {
     default: { animated: false },
@@ -37,7 +37,7 @@ const DataUi: React.FC = (): React.ReactElement => {
     return (
         <div>
             <DividerBox className={styles.dataUiDividerBox}>
-                <SideMenu dockRef={dockRef} />
+                <SideMenu ref={dockRef} />
                 <DockLayout
                     style={{ width: "75%" }}
                     ref={dockRef}

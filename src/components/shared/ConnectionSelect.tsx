@@ -1,6 +1,6 @@
-import { Fragment } from "react";
+import React from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import styles from "./ConnectionSelect.module.scss";
+import styles from "./ConnectionSelect.module.css";
 import { RegisteredServerModel } from "../../lib/models/RegisteredServerModel";
 import { ServerStatus } from "@withonevision/omnihive-core/enums/ServerStatus";
 
@@ -104,7 +104,7 @@ const ConnectionSelect: React.FC<ConnectionSelectProps> = (props): React.ReactEl
                                 <span className={styles.connectionSelectListItemViewSelected}>
                                     <img
                                         className={styles.connectionSelectListItemViewSelectedImage}
-                                        src={`${process.env.PUBLIC_URL}/images/sharedComponents/down-chevron.svg`}
+                                        src="/assets/images/sharedComponents/down-chevron.svg"
                                     />
                                 </span>
                             </div>
@@ -112,7 +112,7 @@ const ConnectionSelect: React.FC<ConnectionSelectProps> = (props): React.ReactEl
 
                         <Transition
                             show={open}
-                            as={Fragment}
+                            as={React.Fragment}
                             leave="transition ease-in duration-100"
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
@@ -149,7 +149,7 @@ const ConnectionSelect: React.FC<ConnectionSelectProps> = (props): React.ReactEl
                                                     <span className={styles.connectionSelectListItemViewSelected}>
                                                         <img
                                                             className={styles.connectionSelectListItemViewSelectedImage}
-                                                            src={`${process.env.PUBLIC_URL}/images/sharedComponents/check.svg`}
+                                                            src="/assets/images/sharedComponents/check.svg"
                                                         />
                                                     </span>
                                                 ) : null}

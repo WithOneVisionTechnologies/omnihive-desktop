@@ -1,38 +1,19 @@
-import { useAtom } from "jotai";
-import React, { useState } from "react";
-import { atomGlobalTabNumber } from "../../lib/stores/AppStore";
-import DataGrid from "./DataGrid";
-import styles from "./ViewTree.module.scss";
+import React from "react";
+import styles from "./ViewTree.module.css";
 import Tree, { TreeNode, TreeNodeProps } from "rc-tree";
 import { DataNode, EventDataNode } from "rc-tree/lib/interface";
+import DockLayout from "rc-dock";
+import { AppStoreProxy } from "../../lib/stores/AppStore";
+import DataGrid from "./DataGrid";
 
 export interface ViewTreeProps {
-    dockRef: any;
     className: any;
     data: DataNode[];
-    setData: Function;
+    setTreeData(nodes: DataNode[]): void;
 }
 
-const ViewTree: React.FC<ViewTreeProps> = (props): React.ReactElement => {
-    const [globalTabNumber, setGlobalTabNumber] = useAtom(atomGlobalTabNumber);
-    const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-
-    const openTable = (tableName: string) => {
-        props.dockRef.current?.dockMove(
-            {
-                id: globalTabNumber.toString(),
-                title: <span title={tableName}>{tableName}</span>,
-                closable: true,
-                group: "default",
-                content: <DataGrid tableName={tableName} connection={"MinistryPlatform-Dev"} />,
-            },
-            "dataUiDock",
-            "middle"
-        );
-
-        const newTabId = globalTabNumber + 1;
-        setGlobalTabNumber(newTabId);
-    };
+const ViewTree = React.forwardRef<DockLayout, ViewTreeProps>((props, ref) => {
+    const [expandedKeys, setExpandedKeys] = React.useState<string[]>([]);
 
     const onClick = (node: EventDataNode) => {
         if (node.children) {
@@ -46,7 +27,19 @@ const ViewTree: React.FC<ViewTreeProps> = (props): React.ReactElement => {
             }
             node.expanded = !node.expanded;
         } else if (node.title && typeof node.title === "string") {
-            openTable(node.title);
+            (ref as React.MutableRefObject<DockLayout>).current?.dockMove(
+                {
+                    id: AppStoreProxy.globalTabNumber.toString(),
+                    title: <span title={node.title}>{node.title}</span>,
+                    closable: true,
+                    group: "default",
+                    content: <DataGrid tableName={node.title} connection={"MinistryPlatform-Dev"} ref={ref} />,
+                },
+                "dataUiDock",
+                "middle"
+            );
+
+            AppStoreProxy.globalTabNumber++;
         }
     };
 
@@ -55,7 +48,7 @@ const ViewTree: React.FC<ViewTreeProps> = (props): React.ReactElement => {
         currentTree = removeDrag(dragNode, currentTree);
         currentTree = moveToTarget(dragNode, targetNode, currentTree);
 
-        props.setData(currentTree);
+        props.setTreeData(currentTree);
     };
 
     const removeDrag = (dragNode: EventDataNode, currentTree: DataNode[]) => {
@@ -142,18 +135,12 @@ const ViewTree: React.FC<ViewTreeProps> = (props): React.ReactElement => {
             if (!props.data.isLeaf) {
                 if (props.expanded) {
                     return (
-                        <img
-                            className={styles.treeNodeFolder}
-                            src={`${process.env.PUBLIC_URL}/images/sharedComponents/down-chevron.svg`}
-                        />
+                        <img className={styles.treeNodeFolder} src="/assets/images/sharedComponents/down-chevron.svg" />
                     );
                 }
 
                 return (
-                    <img
-                        className={styles.treeNodeFolder}
-                        src={`${process.env.PUBLIC_URL}/images/sharedComponents/right-chevron.svg`}
-                    />
+                    <img className={styles.treeNodeFolder} src="/assets/images/sharedComponents/right-chevron.svg" />
                 );
             }
         }
@@ -194,6 +181,6 @@ const ViewTree: React.FC<ViewTreeProps> = (props): React.ReactElement => {
             </div>
         </>
     );
-};
+});
 
 export default ViewTree;
