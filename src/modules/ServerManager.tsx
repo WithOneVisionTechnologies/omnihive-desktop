@@ -3,9 +3,9 @@ import React from "react";
 import "rc-dock/dist/rc-dock.css";
 import styles from "./ServerManager.module.css";
 import { IsHelper } from "@withonevision/omnihive-core/helpers/IsHelper";
-import { useSnapshot } from "valtio";
-import { IAppStore, AppStoreProxy } from "../lib/stores/AppStore";
+import { rendererReactStore } from "../lib/stores/RendererReactStore";
 import AddEditServer from "../components/serverManager/AddEditServer";
+import { useSnapshot } from "valtio";
 
 const defaultGroups = {
     default: { animated: false },
@@ -37,13 +37,13 @@ const defaultLayout: LayoutData = {
 
 const ServerManager: React.FC = (): React.ReactElement => {
     const dockRef = React.useRef<DockLayout>(null);
-    const appStoreSnap = useSnapshot<IAppStore>(AppStoreProxy);
     const [dockLayout, setDockLayout] = React.useState<LayoutData>(defaultLayout);
+    const rendererReactStoreSnapshot = useSnapshot(rendererReactStore);
 
     const addServerClick = () => {
         dockRef.current?.dockMove(
             {
-                id: appStoreSnap.globalTabNumber.toString(),
+                id: rendererReactStoreSnapshot.globalTabNumber.toString(),
                 title: <span title="Add New Server">Add New Server</span>,
                 closable: true,
                 group: "default",
@@ -53,7 +53,7 @@ const ServerManager: React.FC = (): React.ReactElement => {
             "middle"
         );
 
-        AppStoreProxy.globalTabNumber++;
+        rendererReactStore.globalTabNumber++;
     };
 
     const onDockLayoutChange = (

@@ -1,8 +1,10 @@
 const path = require("path");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
+    target: "electron-renderer",
     module: {
         rules: [
             {
@@ -72,6 +74,7 @@ module.exports = {
                 },
             ],
         }),
+        new Dotenv(),
     ],
     resolve: {
         extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".png"],

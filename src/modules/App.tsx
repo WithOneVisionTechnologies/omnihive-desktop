@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactTooltip from "react-tooltip";
 import styles from "./App.module.css";
 import ServerManager from "./ServerManager";
@@ -8,94 +8,136 @@ import { DesktopModule } from "../lib/models/DesktopModule";
 import Settings from "./Settings";
 import Startup from "./Startup";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { IAppStore, AppStoreProxy } from "../lib/stores/AppStore";
+import { subscribeKey } from "valtio/utils";
+import { rendererSharedStore } from "../lib/stores/RendererSharedStore";
+import { rendererReactStore } from "../lib/stores/RendererReactStore";
+import { IpcMessageName } from "../lib/enums/IpcMessageName";
 import { useSnapshot } from "valtio";
+import { useLDClient } from "launchdarkly-react-client-sdk";
+import _ from "lodash";
+import { DesktopConstants } from "../lib/models/DesktopConstants";
+import { ipcRenderer } from "electron-better-ipc";
 
-const registeredModules: DesktopModule[] = [
-    {
-        key: DesktopModuleKey.ServerManager,
-        displayName: "Server Manager",
-        imageSource: "/assets/images/modules/server_manager.png",
-    },
-    {
-        key: DesktopModuleKey.DataUi,
-        displayName: "Data UI",
-        imageSource: "/assets/images/modules/data_ui.png",
-    },
-];
+ipcRenderer.answerMain(IpcMessageName.MainSharedStore_AppSettings_Changed, (arg: string) => {
+    if (!_.isEqual(rendererSharedStore.appSettings, JSON.parse(arg))) {
+        rendererSharedStore.appSettings = JSON.parse(arg);
+        console.log(`Renderer Process Received AppSettings Change`);
+    }
+});
+
+subscribeKey(rendererSharedStore, "appSettings", () => {
+    ipcRenderer.callMain(
+        IpcMessageName.RendererSharedStore_AppSettings_Changed,
+        JSON.stringify(rendererSharedStore.appSettings)
+    );
+});
+
+let moduleCounter: number = 0;
 
 const App: React.FC = (): React.ReactElement => {
     const queryClient = new QueryClient();
-    const appStoreSnap = useSnapshot<IAppStore>(AppStoreProxy);
+    const rendererReactStoreSnapshot = useSnapshot(rendererReactStore);
+    const client = useLDClient();
+    const [activeModuleCount, setActiveModuleCount] = useState<number>(0);
 
-    const renderBlankAppPlaceholders = (): React.ReactElement[] => {
-        const items: React.ReactElement[] = [];
+    React.useEffect(() => {
+        DesktopConstants.registeredModules.forEach((mod: DesktopModule) => {
+            const initialFlagValue: boolean = client.variation(`${mod.flagName}`, false);
 
-        for (let i = 0; i < 10 - registeredModules.length; i++) {
-            items.push(
+            if (initialFlagValue === true) {
+                moduleCounter = moduleCounter + 1;
+            }
+
+            client.on(`change:${mod.flagName}`, (newValue, oldValue) => {
+                if (oldValue === false && newValue === true) {
+                    moduleCounter = moduleCounter + 1;
+                }
+                if (oldValue === true && newValue === false) {
+                    moduleCounter = moduleCounter - 1;
+                }
+
+                setActiveModuleCount(moduleCounter);
+            });
+        });
+
+        setActiveModuleCount(moduleCounter);
+    }, []);
+
+    const renderBlankPlaceholders = (): React.ReactElement[] => {
+        const blankPlaceholders: React.ReactElement[] = [];
+
+        for (let i = activeModuleCount; i < 10; i++) {
+            blankPlaceholders.push(
                 <div key={i} className={styles.sidebarLink}>
                     <img className={styles.sidebarImage} src="/assets/images/blank_app.png" alt="Blank App" />
                 </div>
             );
         }
 
-        return items;
+        return blankPlaceholders;
     };
 
     return (
         <QueryClientProvider client={queryClient}>
             <div className={styles.appContainer}>
-                {appStoreSnap.activeModuleKey === DesktopModuleKey.Startup && <Startup />}
-                {appStoreSnap.activeModuleKey !== DesktopModuleKey.Startup && (
+                {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.Startup && <Startup />}
+                {rendererReactStoreSnapshot.activeModuleKey !== DesktopModuleKey.Startup && (
                     <>
                         <div className={styles.sidebar}>
                             <div className={styles.sidebarApps}>
-                                {registeredModules.map((desktopModule: DesktopModule) => (
+                                {DesktopConstants.registeredModules.map((desktopModule: DesktopModule) => (
                                     <React.Fragment key={desktopModule.key}>
-                                        <div
-                                            className={`${styles.sidebarLink} ${styles.sidebarLinkFilled} ${
-                                                appStoreSnap.activeModuleKey === desktopModule.key
-                                                    ? `${styles.sidebarLinkActive}`
-                                                    : ``
-                                            }`}
-                                            data-tip
-                                            data-for={`${desktopModule.key}-tooltip`}
-                                            onClick={() => {
-                                                if (desktopModule.key !== appStoreSnap.activeModuleKey) {
-                                                    AppStoreProxy.activeModuleKey = desktopModule.key;
-                                                }
-                                            }}
-                                        >
-                                            <img
-                                                className={styles.sidebarImage}
-                                                src={desktopModule.imageSource}
-                                                alt={desktopModule.displayName}
-                                            />
-                                        </div>
-                                        <ReactTooltip
-                                            id={`${desktopModule.key}-tooltip`}
-                                            place="top"
-                                            effect="solid"
-                                            type="warning"
-                                        >
-                                            {desktopModule.displayName}
-                                        </ReactTooltip>
+                                        {client.variation(desktopModule.flagName, false) === true && (
+                                            <React.Fragment>
+                                                <div
+                                                    className={`${styles.sidebarLink} ${styles.sidebarLinkFilled} ${
+                                                        rendererReactStoreSnapshot.activeModuleKey === desktopModule.key
+                                                            ? `${styles.sidebarLinkActive}`
+                                                            : ``
+                                                    }`}
+                                                    data-tip
+                                                    data-for={`${desktopModule.key}-tooltip`}
+                                                    onClick={() => {
+                                                        if (
+                                                            desktopModule.key !==
+                                                            rendererReactStoreSnapshot.activeModuleKey
+                                                        ) {
+                                                            rendererReactStore.activeModuleKey = desktopModule.key;
+                                                        }
+                                                    }}
+                                                >
+                                                    <img
+                                                        className={styles.sidebarImage}
+                                                        src={desktopModule.imageSource}
+                                                        alt={desktopModule.displayName}
+                                                    />
+                                                </div>
+                                                <ReactTooltip
+                                                    id={`${desktopModule.key}-tooltip`}
+                                                    place="top"
+                                                    effect="solid"
+                                                    type="warning"
+                                                >
+                                                    {desktopModule.displayName}
+                                                </ReactTooltip>
+                                            </React.Fragment>
+                                        )}
                                     </React.Fragment>
                                 ))}
-                                {renderBlankAppPlaceholders()}
+                                {renderBlankPlaceholders()}
                             </div>
                             <div className={styles.sidebarTools}>
                                 <div
                                     className={`${styles.sidebarLink} ${styles.sidebarLinkFilled} ${
-                                        appStoreSnap.activeModuleKey === DesktopModuleKey.Settings
+                                        rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.Settings
                                             ? `${styles.sidebarLinkActive}`
                                             : ``
                                     }`}
                                     data-tip
                                     data-for={"settings-tooltip"}
                                     onClick={() => {
-                                        if (appStoreSnap.activeModuleKey !== DesktopModuleKey.Settings) {
-                                            AppStoreProxy.activeModuleKey = DesktopModuleKey.Settings;
+                                        if (rendererReactStoreSnapshot.activeModuleKey !== DesktopModuleKey.Settings) {
+                                            rendererReactStore.activeModuleKey = DesktopModuleKey.Settings;
                                         }
                                     }}
                                 >
@@ -111,9 +153,11 @@ const App: React.FC = (): React.ReactElement => {
                             </div>
                         </div>
                         <div className={styles.appActive}>
-                            {appStoreSnap.activeModuleKey === DesktopModuleKey.ServerManager && <ServerManager />}
-                            {appStoreSnap.activeModuleKey === DesktopModuleKey.DataUi && <DataUi />}
-                            {appStoreSnap.activeModuleKey === DesktopModuleKey.Settings && <Settings />}
+                            {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.ServerManager && (
+                                <ServerManager />
+                            )}
+                            {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.DataUi && <DataUi />}
+                            {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.Settings && <Settings />}
                         </div>
                     </>
                 )}

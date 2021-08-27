@@ -3,8 +3,9 @@ import styles from "./ViewTree.module.css";
 import Tree, { TreeNode, TreeNodeProps } from "rc-tree";
 import { DataNode, EventDataNode } from "rc-tree/lib/interface";
 import DockLayout from "rc-dock";
-import { AppStoreProxy } from "../../lib/stores/AppStore";
+import { rendererReactStore } from "../../lib/stores/RendererReactStore";
 import DataGrid from "./DataGrid";
+import { useSnapshot } from "valtio";
 
 export interface ViewTreeProps {
     className: any;
@@ -14,6 +15,7 @@ export interface ViewTreeProps {
 
 const ViewTree = React.forwardRef<DockLayout, ViewTreeProps>((props, ref) => {
     const [expandedKeys, setExpandedKeys] = React.useState<string[]>([]);
+    const rendererReactStoreSnapshot = useSnapshot(rendererReactStore);
 
     const onClick = (node: EventDataNode) => {
         if (node.children) {
@@ -29,7 +31,7 @@ const ViewTree = React.forwardRef<DockLayout, ViewTreeProps>((props, ref) => {
         } else if (node.title && typeof node.title === "string") {
             (ref as React.MutableRefObject<DockLayout>).current?.dockMove(
                 {
-                    id: AppStoreProxy.globalTabNumber.toString(),
+                    id: rendererReactStoreSnapshot.globalTabNumber.toString(),
                     title: <span title={node.title}>{node.title}</span>,
                     closable: true,
                     group: "default",
@@ -39,7 +41,7 @@ const ViewTree = React.forwardRef<DockLayout, ViewTreeProps>((props, ref) => {
                 "middle"
             );
 
-            AppStoreProxy.globalTabNumber++;
+            rendererReactStore.globalTabNumber++;
         }
     };
 
