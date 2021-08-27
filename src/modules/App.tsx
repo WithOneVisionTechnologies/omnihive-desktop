@@ -17,6 +17,7 @@ import { useLDClient } from "launchdarkly-react-client-sdk";
 import _ from "lodash";
 import { DesktopConstants } from "../lib/models/DesktopConstants";
 import { ipcRenderer } from "electron-better-ipc";
+import NoModules from "./NoModules";
 
 ipcRenderer.answerMain(IpcMessageName.MainSharedStore_AppSettings_Changed, (arg: string) => {
     if (!_.isEqual(rendererSharedStore.appSettings, JSON.parse(arg))) {
@@ -54,6 +55,28 @@ const App: React.FC = (): React.ReactElement => {
                 }
                 if (oldValue === true && newValue === false) {
                     moduleCounter = moduleCounter - 1;
+                }
+                if (moduleCounter === 0) {
+                    rendererReactStore.activeModuleKey = DesktopModuleKey.Unknown;
+                }
+                if (moduleCounter === 1 && newValue === true) {
+                    rendererReactStore.activeModuleKey = mod.key;
+                }
+                if (moduleCounter === 1 && newValue === false) {
+                    let checkDone: boolean = false;
+
+                    DesktopConstants.registeredModules.forEach((checkMod: DesktopModule) => {
+                        if (checkDone === true) {
+                            return;
+                        }
+
+                        const checkFlagValue: boolean = client.variation(`${checkMod.flagName}`, false);
+
+                        if (checkFlagValue === true) {
+                            rendererReactStore.activeModuleKey = checkMod.key;
+                            checkDone = true;
+                        }
+                    });
                 }
 
                 setActiveModuleCount(moduleCounter);
@@ -153,11 +176,21 @@ const App: React.FC = (): React.ReactElement => {
                             </div>
                         </div>
                         <div className={styles.appActive}>
-                            {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.ServerManager && (
-                                <ServerManager />
-                            )}
-                            {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.DataUi && <DataUi />}
                             {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.Settings && <Settings />}
+                            {activeModuleCount === 0 && <NoModules />}
+                            {activeModuleCount !== 0 && (
+                                <>
+                                    {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.Unknown && (
+                                        <NoModules />
+                                    )}
+                                    {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.ServerManager && (
+                                        <ServerManager />
+                                    )}
+                                    {rendererReactStoreSnapshot.activeModuleKey === DesktopModuleKey.DataUi && (
+                                        <DataUi />
+                                    )}
+                                </>
+                            )}
                         </div>
                     </>
                 )}
