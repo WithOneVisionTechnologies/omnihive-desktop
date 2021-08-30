@@ -70,6 +70,7 @@
         "electron-better-ipc": "2.0.1",
         "electron-is-dev": "2.0.0",
         "electron-squirrel-startup": "1.0.0",
+        "electron-store": "8.0.0",
         "is-ip": "3.1.0",
         "launchdarkly-react-client-sdk": "2.23.0",
         "lodash": "4.17.21",
